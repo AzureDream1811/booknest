@@ -29,7 +29,7 @@ import lombok.Setter;
 @Builder
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "refresh_tokens")
-public class RefeshToken {
+public class RefreshToken {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -38,7 +38,7 @@ public class RefeshToken {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "token_hash", nullable = false, unique = true)
+    @Column(name = "token_hash", nullable = false, unique = true, length = 255)
     private String tokenHash;
 
     @Column(name = "expires_at", nullable = false)
@@ -55,7 +55,7 @@ public class RefeshToken {
     private LocalDateTime createdAt;
 
     public boolean isExpired() {
-        return LocalDateTime.now().isAfter(expiresAt);
+        return !LocalDateTime.now().isBefore(expiresAt);
     }
 
     public boolean isRevoked() {
