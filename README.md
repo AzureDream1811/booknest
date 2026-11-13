@@ -29,18 +29,16 @@ Users can discover books through an external book catalog, manage their personal
 
 ## Architecture
 
-BookNest follows a microservices architecture to separate business responsibilities and support independent development and deployment.
+BookNest is currently organized as a modular monolith so the domains can share one application and database during MVP development. The modules can be split into services later if scale or deployment requirements justify it.
 
-Planned services:
+Planned domain modules:
 
 | Service         | Responsibility                                      |
 | --------------- | --------------------------------------------------- |
-| Auth Service    | User accounts and authentication                    |
-| Book Service    | Book catalog and external book API integration      |
-| Library Service | Personal libraries and reading progress             |
-| Social Service  | Reviews, ratings, and social interactions (planned) |
-| API Gateway     | Request routing and centralized entry point         |
-| Eureka Server   | Service discovery                                   |
+| Auth module     | User accounts and authentication                    |
+| Book module     | Book catalog and external book API integration      |
+| Library module  | Personal libraries and reading progress             |
+| Social module   | Reviews, ratings, and social interactions (planned) |
 
 ### Infrastructure
 
@@ -58,7 +56,7 @@ Planned services:
 | Database           | PostgreSQL                   |
 | ORM                | Spring Data JPA, Hibernate   |
 | Security           | Spring Security, JWT         |
-| Microservices      | Spring Cloud Gateway, Eureka |
+| Architecture       | Spring Boot modular monolith |
 | Messaging          | RabbitMQ                     |
 | Caching            | Redis                        |
 | Database Migration | Flyway                       |
@@ -69,11 +67,10 @@ Planned services:
 ```text
 booknest/
 ├── backend/
-│   ├── auth-service/
-│   ├── book-service/
-│   ├── library-service/
-│   ├── api-gateway/
-│   └── discovery-server/
+│   └── booknest/
+│       ├── src/main/java/com/azure/booknest/auth/
+│       ├── src/main/resources/
+│       └── build.gradle
 │
 ├── frontend/
 │
@@ -99,11 +96,10 @@ Installation and deployment instructions will be added as the services and front
 
 ## Development Roadmap
 
-- [ ] Define database schemas and service boundaries.
-- [ ] Implement Auth Service.
-- [ ] Implement Book Service and external book catalog integration.
-- [ ] Implement Library Service.
-- [ ] Configure API Gateway and service discovery.
+- [ ] Define database schemas and domain module boundaries.
+- [x] Implement the Auth module.
+- [ ] Implement the Book module and external book catalog integration.
+- [ ] Implement the Library module.
 - [ ] Develop the React frontend.
 - [ ] Integrate Redis and RabbitMQ where needed.
 - [ ] Write unit and integration tests.
