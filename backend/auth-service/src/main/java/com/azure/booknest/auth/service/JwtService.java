@@ -7,6 +7,8 @@ import java.util.UUID;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.JwsHeader;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 public class JwtService {
 
     private final JwtEncoder jwtEncoder;
+    private final JwtDecoder jwtDecoder;
 
     private static final long ACCESS_EXPIRATION_TIME = 900; // 15 minutes
     static final long REFRESH_EXPIRATION_TIME = 604800; // 7 days
@@ -64,4 +67,22 @@ public class JwtService {
 
         return jwtEncoder.encode(JwtEncoderParameters.from(header, claims)).getTokenValue();
     }
+
+    public boolean isTokenExpired(String token) {
+        try {
+            Instant expiration = jwtDecoder.decode(token).getExpiresAt();
+            return expiration == null || !Instant.now().isBefore(expiration);
+        } catch (JwtException exception) {
+            return true;
+        }
+    }
+
+    public boolean isRefreshTokenValid(String token) {
+        try {
+            return "refresh".equals(jwtDecoder.decode(token).getClaimAsString("token_type"));
+        } catch (JwtException exception) {
+            return false;
+        }
+    }
+
 }
