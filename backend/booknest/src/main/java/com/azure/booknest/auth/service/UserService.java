@@ -17,6 +17,9 @@ import com.azure.booknest.auth.dto.response.LoginResponse;
 import com.azure.booknest.auth.dto.response.RegisterResponse;
 import com.azure.booknest.auth.entity.RefreshToken;
 import com.azure.booknest.auth.entity.User;
+import com.azure.booknest.auth.exceptions.EmailAlreadyExistsException;
+import com.azure.booknest.auth.exceptions.InvalidCredentialsException;
+import com.azure.booknest.auth.exceptions.InvalidRefreshTokenException;
 import com.azure.booknest.auth.repository.RefreshTokenRepository;
 import com.azure.booknest.auth.repository.UserRepository;
 
@@ -34,7 +37,7 @@ public class UserService {
     @Transactional
     public RegisterResponse register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.email())) {
-            throw new IllegalArgumentException("Email already exists");
+            throw new EmailAlreadyExistsException(request.email());
         }
 
         User user = new User();
@@ -49,10 +52,10 @@ public class UserService {
 
     private User authenticate(String email, String password) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid email or password"));
+                .orElseThrow(InvalidCredentialsException::new);
 
         if (!passwordEncoder.matches(password, user.getPasswordHash())) {
-            throw new IllegalArgumentException("Invalid email or password");
+            throw new InvalidCredentialsException();
         }
 
         return user;
@@ -86,7 +89,7 @@ public class UserService {
     /**
      * Refreshes the access token using a valid refresh token.
      * If the refresh token is valid, it generates a new access token and a new refresh token, revokes the old refresh token, and saves the new refresh token in the database.
-     * If the refresh token is invalid or expired, it throws an IllegalArgumentException.
+     * If the refresh token is invalid or expired, it throws an InvalidRefreshTokenException.
      * 
      * @param request
      * @return
@@ -95,12 +98,12 @@ public class UserService {
     public LoginResponse refresh(RefreshTokenRequest request) {
         String refreshTokenValue = request.refreshToken();
         if (!jwtService.isRefreshTokenValid(refreshTokenValue)) {
-            throw new IllegalArgumentException("Invalid or expired refresh token");
+            throw new InvalidRefreshTokenException("Invalid or expired refresh token");
         }
 
         RefreshToken currentToken = refreshTokenRepository.findByTokenHash(hashToken(refreshTokenValue))
                 .filter(RefreshToken::isValid)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid or revoked refresh token"));
+                .orElseThrow(() -> new InvalidRefreshTokenException("Invalid or revoked refresh token"));
 
         User user = currentToken.getUser();
         String accessToken = jwtService.generateAccessToken(user);

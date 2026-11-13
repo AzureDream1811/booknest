@@ -35,16 +35,33 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler({
-            IllegalArgumentException.class,
             HttpMessageNotReadableException.class
     })
     public ResponseEntity<ErrorResponse> handleBadRequest(
             Exception exception,
             WebRequest request) {
-        String message = exception instanceof HttpMessageNotReadableException
-                ? "Request body is invalid"
-                : exception.getMessage();
-        return buildResponse(HttpStatus.BAD_REQUEST, message, request, Map.of());
+        return buildResponse(HttpStatus.BAD_REQUEST, "Request body is invalid", request, Map.of());
+    }
+
+    @ExceptionHandler(EmailAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handleEmailAlreadyExists(
+            EmailAlreadyExistsException exception,
+            WebRequest request) {
+        return buildResponse(HttpStatus.CONFLICT, exception.getMessage(), request, Map.of());
+    }
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidCredentials(
+            InvalidCredentialsException exception,
+            WebRequest request) {
+        return buildResponse(HttpStatus.UNAUTHORIZED, exception.getMessage(), request, Map.of());
+    }
+
+    @ExceptionHandler(InvalidRefreshTokenException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidRefreshToken(
+            InvalidRefreshTokenException exception,
+            WebRequest request) {
+        return buildResponse(HttpStatus.UNAUTHORIZED, exception.getMessage(), request, Map.of());
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
