@@ -47,7 +47,7 @@ public class RefreshToken {
     @Column(name = "revoked_at")
     private LocalDateTime revokedAt;
 
-    @Column(name = "replaced_by_token_hash")
+    @Column(name = "replaced_by_token_hash", length = 255)
     private String replacedByTokenHash;
 
     @CreatedDate
@@ -70,5 +70,14 @@ public class RefreshToken {
         if (revokedAt == null) {
             revokedAt = LocalDateTime.now();
         }
+    }
+
+    public void replaceWith(String replacementTokenHash) {
+        if (isRevoked()) {
+            throw new IllegalStateException("Refresh token has already been revoked");
+        }
+
+        replacedByTokenHash = replacementTokenHash;
+        revokedAt = LocalDateTime.now();
     }
 }
