@@ -1,12 +1,12 @@
 spring:
   application:
-    name: auth-service
+    name: booknest
 
   config:
     import: optional:file:.env[.properties],optional:file:../../.env[.properties]
 
   datasource:
-    url: jdbc:postgresql://localhost:5433/${POSTGRES_AUTH_DB}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5433/${POSTGRES_AUTH_DB}}
     username: ${POSTGRES_USER}
     password: ${POSTGRES_PASSWORD}
     driver-class-name: org.postgresql.Driver
