@@ -19,90 +19,97 @@ import com.azure.booknest.common.response.ErrorResponse;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleValidation(
-            MethodArgumentNotValidException exception,
-            WebRequest request) {
-        Map<String, String> fieldErrors = new LinkedHashMap<>();
-        exception.getBindingResult().getFieldErrors()
-                .forEach(error -> fieldErrors.putIfAbsent(error.getField(), error.getDefaultMessage()));
+        @ExceptionHandler(ResourceNotFoundException.class)
+        public ResponseEntity<ErrorResponse> handleResourceNotFound(
+                        ResourceNotFoundException exception,
+                        WebRequest request) {
+                return buildResponse(HttpStatus.NOT_FOUND, exception.getMessage(), request, Map.of());
+        }
 
-        return buildResponse(
-                HttpStatus.BAD_REQUEST,
-                "Validation failed",
-                request,
-                fieldErrors);
-    }
+        @ExceptionHandler(MethodArgumentNotValidException.class)
+        public ResponseEntity<ErrorResponse> handleValidation(
+                        MethodArgumentNotValidException exception,
+                        WebRequest request) {
+                Map<String, String> fieldErrors = new LinkedHashMap<>();
+                exception.getBindingResult().getFieldErrors()
+                                .forEach(error -> fieldErrors.putIfAbsent(error.getField(), error.getDefaultMessage()));
 
-    @ExceptionHandler({
-            HttpMessageNotReadableException.class
-    })
-    public ResponseEntity<ErrorResponse> handleBadRequest(
-            Exception exception,
-            WebRequest request) {
-        return buildResponse(HttpStatus.BAD_REQUEST, "Request body is invalid", request, Map.of());
-    }
+                return buildResponse(
+                                HttpStatus.BAD_REQUEST,
+                                "Validation failed",
+                                request,
+                                fieldErrors);
+        }
 
-    @ExceptionHandler(EmailAlreadyExistsException.class)
-    public ResponseEntity<ErrorResponse> handleEmailAlreadyExists(
-            EmailAlreadyExistsException exception,
-            WebRequest request) {
-        return buildResponse(HttpStatus.CONFLICT, exception.getMessage(), request, Map.of());
-    }
+        @ExceptionHandler({
+                        HttpMessageNotReadableException.class
+        })
+        public ResponseEntity<ErrorResponse> handleBadRequest(
+                        Exception exception,
+                        WebRequest request) {
+                return buildResponse(HttpStatus.BAD_REQUEST, "Request body is invalid", request, Map.of());
+        }
 
-    @ExceptionHandler(InvalidCredentialsException.class)
-    public ResponseEntity<ErrorResponse> handleInvalidCredentials(
-            InvalidCredentialsException exception,
-            WebRequest request) {
-        return buildResponse(HttpStatus.UNAUTHORIZED, exception.getMessage(), request, Map.of());
-    }
+        @ExceptionHandler(EmailAlreadyExistsException.class)
+        public ResponseEntity<ErrorResponse> handleEmailAlreadyExists(
+                        EmailAlreadyExistsException exception,
+                        WebRequest request) {
+                return buildResponse(HttpStatus.CONFLICT, exception.getMessage(), request, Map.of());
+        }
 
-    @ExceptionHandler(InvalidRefreshTokenException.class)
-    public ResponseEntity<ErrorResponse> handleInvalidRefreshToken(
-            InvalidRefreshTokenException exception,
-            WebRequest request) {
-        return buildResponse(HttpStatus.UNAUTHORIZED, exception.getMessage(), request, Map.of());
-    }
+        @ExceptionHandler(InvalidCredentialsException.class)
+        public ResponseEntity<ErrorResponse> handleInvalidCredentials(
+                        InvalidCredentialsException exception,
+                        WebRequest request) {
+                return buildResponse(HttpStatus.UNAUTHORIZED, exception.getMessage(), request, Map.of());
+        }
 
-    @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<ErrorResponse> handleConflict(
-            DataIntegrityViolationException exception,
-            WebRequest request) {
-        return buildResponse(
-                HttpStatus.CONFLICT,
-                "The request conflicts with existing data",
-                request,
-                Map.of());
-    }
+        @ExceptionHandler(InvalidRefreshTokenException.class)
+        public ResponseEntity<ErrorResponse> handleInvalidRefreshToken(
+                        InvalidRefreshTokenException exception,
+                        WebRequest request) {
+                return buildResponse(HttpStatus.UNAUTHORIZED, exception.getMessage(), request, Map.of());
+        }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleUnexpected(
-            Exception exception,
-            WebRequest request) {
-        return buildResponse(
-                HttpStatus.INTERNAL_SERVER_ERROR,
-                "An unexpected error occurred",
-                request,
-                Map.of());
-    }
+        @ExceptionHandler(DataIntegrityViolationException.class)
+        public ResponseEntity<ErrorResponse> handleConflict(
+                        DataIntegrityViolationException exception,
+                        WebRequest request) {
+                return buildResponse(
+                                HttpStatus.CONFLICT,
+                                "The request conflicts with existing data",
+                                request,
+                                Map.of());
+        }
 
-    private ResponseEntity<ErrorResponse> buildResponse(
-            HttpStatus status,
-            String message,
-            WebRequest request,
-            Map<String, String> fieldErrors) {
-        String path = request instanceof ServletWebRequest servletWebRequest
-                ? servletWebRequest.getRequest().getRequestURI()
-                : request.getDescription(false).replace("uri=", "");
+        @ExceptionHandler(Exception.class)
+        public ResponseEntity<ErrorResponse> handleUnexpected(
+                        Exception exception,
+                        WebRequest request) {
+                return buildResponse(
+                                HttpStatus.INTERNAL_SERVER_ERROR,
+                                "An unexpected error occurred",
+                                request,
+                                Map.of());
+        }
 
-        ErrorResponse response = new ErrorResponse(
-                Instant.now(),
-                status.value(),
-                status.getReasonPhrase(),
-                message == null || message.isBlank() ? status.getReasonPhrase() : message,
-                path,
-                fieldErrors);
+        private ResponseEntity<ErrorResponse> buildResponse(
+                        HttpStatus status,
+                        String message,
+                        WebRequest request,
+                        Map<String, String> fieldErrors) {
+                String path = request instanceof ServletWebRequest servletWebRequest
+                                ? servletWebRequest.getRequest().getRequestURI()
+                                : request.getDescription(false).replace("uri=", "");
 
-        return ResponseEntity.status(status).body(response);
-    }
+                ErrorResponse response = new ErrorResponse(
+                                Instant.now(),
+                                status.value(),
+                                status.getReasonPhrase(),
+                                message == null || message.isBlank() ? status.getReasonPhrase() : message,
+                                path,
+                                fieldErrors);
+
+                return ResponseEntity.status(status).body(response);
+        }
 }
