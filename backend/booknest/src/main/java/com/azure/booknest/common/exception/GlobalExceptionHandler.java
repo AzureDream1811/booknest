@@ -19,6 +19,13 @@ import com.azure.booknest.common.response.ErrorResponse;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+        @ExceptionHandler(ExternalApiException.class)
+        public ResponseEntity<ErrorResponse> handleExternalApiException(
+                        ExternalApiException exception,
+                        WebRequest request) {
+                return buildResponse(HttpStatus.BAD_GATEWAY, exception.getMessage(), request, Map.of());
+        }
+
         @ExceptionHandler(ResourceNotFoundException.class)
         public ResponseEntity<ErrorResponse> handleResourceNotFound(
                         ResourceNotFoundException exception,
