@@ -1,4 +1,4 @@
-package com.azure.booknest.auth.exceptions;
+package com.azure.booknest.common.exception;
 
 public class InvalidRefreshTokenException extends RuntimeException {
 

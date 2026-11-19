@@ -1,4 +1,4 @@
-package com.azure.booknest.auth.dto.response;
+package com.azure.booknest.common.response;
 
 import java.time.Instant;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package com.azure.booknest.auth.enums;
+package com.azure.booknest.auth.entity;
 
 public enum UserStatus {
     ACTIVE,

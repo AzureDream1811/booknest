@@ -1,4 +1,4 @@
-package com.azure.booknest.auth.config;
+package com.azure.booknest.config;
 
 import java.util.Base64;
 

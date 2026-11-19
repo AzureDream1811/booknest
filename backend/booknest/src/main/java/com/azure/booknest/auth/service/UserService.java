@@ -17,9 +17,9 @@ import com.azure.booknest.auth.dto.response.LoginResponse;
 import com.azure.booknest.auth.dto.response.RegisterResponse;
 import com.azure.booknest.auth.entity.RefreshToken;
 import com.azure.booknest.auth.entity.User;
-import com.azure.booknest.auth.exceptions.EmailAlreadyExistsException;
-import com.azure.booknest.auth.exceptions.InvalidCredentialsException;
-import com.azure.booknest.auth.exceptions.InvalidRefreshTokenException;
+import com.azure.booknest.common.exception.EmailAlreadyExistsException;
+import com.azure.booknest.common.exception.InvalidCredentialsException;
+import com.azure.booknest.common.exception.InvalidRefreshTokenException;
 import com.azure.booknest.auth.repository.RefreshTokenRepository;
 import com.azure.booknest.auth.repository.UserRepository;
 

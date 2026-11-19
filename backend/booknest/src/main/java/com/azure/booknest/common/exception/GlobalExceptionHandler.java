@@ -1,4 +1,4 @@
-package com.azure.booknest.auth.exceptions;
+package com.azure.booknest.common.exception;
 
 import java.time.Instant;
 import java.util.LinkedHashMap;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 
-import com.azure.booknest.auth.dto.response.ErrorResponse;
+import com.azure.booknest.common.response.ErrorResponse;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {

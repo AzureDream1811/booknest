@@ -1,4 +1,4 @@
-package com.azure.booknest.auth;
+package com.azure.booknest;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

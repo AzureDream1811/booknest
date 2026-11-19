@@ -1,4 +1,4 @@
-package com.azure.booknest.auth.config;
+package com.azure.booknest.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
