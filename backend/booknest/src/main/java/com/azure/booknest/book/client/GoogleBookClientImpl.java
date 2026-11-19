@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
+import com.azure.booknest.book.dto.response.GoogleBookItem;
 import com.azure.booknest.book.dto.response.GoogleBooksResponse;
 import com.azure.booknest.common.exception.ExternalApiException;
 
@@ -29,6 +30,18 @@ public class GoogleBookClientImpl implements GoogleBookClient {
                             "Error occurred while calling Google Books API: " + response.getStatusCode());
                 })
                 .body(GoogleBooksResponse.class);
+    }
+
+    @Override
+    public GoogleBookItem getBookByExternalId(String externalId) {
+        return restClient.get()
+                .uri("/{externalId}", externalId)
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, (request, response) -> {
+                    throw new ExternalApiException(
+                            "Error occurred while calling Google Books API: " + response.getStatusCode());
+                })
+                .body(GoogleBookItem.class);
     }
 
 }
