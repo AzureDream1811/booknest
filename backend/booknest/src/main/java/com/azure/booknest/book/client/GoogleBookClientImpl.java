@@ -25,7 +25,8 @@ public class GoogleBookClientImpl implements GoogleBookClient {
                         .build())
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, (request, response) -> {
-                    throw new ExternalApiException("Error occurred while calling Google Books API: " + response);
+                    throw new ExternalApiException(
+                            "Error occurred while calling Google Books API: " + response.getStatusCode());
                 })
                 .body(GoogleBooksResponse.class);
     }

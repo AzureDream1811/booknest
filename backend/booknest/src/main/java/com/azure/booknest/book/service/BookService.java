@@ -3,6 +3,8 @@ package com.azure.booknest.book.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.azure.booknest.book.client.GoogleBookClient;
+import com.azure.booknest.book.dto.response.GoogleBooksResponse;
 import com.azure.booknest.book.entity.Book;
 import com.azure.booknest.book.repository.BookRepository;
 import com.azure.booknest.common.exception.ResourceNotFoundException;
@@ -14,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 public class BookService {
 
     private final BookRepository bookRepository;
+    private final GoogleBookClient googleBookClient;
 
     @Transactional(readOnly = true)
     public Book getBookById(Long id) {
@@ -29,5 +32,9 @@ public class BookService {
                 .orElseThrow(() -> new ResourceNotFoundException("Book not found with External ID: " + externalId));
 
         return book;
+    }
+
+    public GoogleBooksResponse searchBooks(String query) {
+        return googleBookClient.searchBooks(query);
     }
 }
