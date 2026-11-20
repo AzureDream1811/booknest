@@ -31,15 +31,15 @@ public class UserBookController {
 
     @PostMapping("/books/{bookId}")
     public ResponseEntity<UserBookResponse> addBook(
-            @RequestParam Long userId,
-            @PathVariable Long bookId) {
+            @RequestParam("userId") Long userId,
+            @PathVariable("bookId") Long bookId) {
         return ResponseEntity.ok(userBookService.addBook(userId, bookId));
     }
 
     @GetMapping
     public ResponseEntity<UserLibraryResponse> getLibrary(
-            @RequestParam Long userId,
-            @RequestParam(required = false) ReadingStatus status) {
+            @RequestParam("userId") Long userId,
+            @RequestParam(name = "status", required = false) ReadingStatus status) {
 
         UserLibraryResponse response = status == null
                 ? userBookService.getUserLibrary(userId)
@@ -50,8 +50,8 @@ public class UserBookController {
 
     @PatchMapping("/books/{bookId}/progress")
     public ResponseEntity<UserBookResponse> updateProgress(
-            @RequestParam Long userId,
-            @PathVariable Long bookId,
+            @RequestParam("userId") Long userId,
+            @PathVariable("bookId") Long bookId,
             @Valid @RequestBody ReadingProgressRequest request) {
 
         return ResponseEntity.ok(
@@ -61,8 +61,8 @@ public class UserBookController {
 
     @PatchMapping("/books/{bookId}/status")
     public ResponseEntity<UserBookResponse> updateStatus(
-            @RequestParam Long userId,
-            @PathVariable Long bookId,
+            @RequestParam("userId") Long userId,
+            @PathVariable("bookId") Long bookId,
             @Valid @RequestBody ReadingStatusRequest request) {
 
         return ResponseEntity.ok(
@@ -72,8 +72,8 @@ public class UserBookController {
 
     @DeleteMapping("/books/{bookId}")
     public ResponseEntity<Void> removeBook(
-            @RequestParam Long userId,
-            @PathVariable Long bookId) {
+            @RequestParam("userId") Long userId,
+            @PathVariable("bookId") Long bookId) {
 
         userBookService.removeBook(userId, bookId);
         return ResponseEntity.noContent().build();
