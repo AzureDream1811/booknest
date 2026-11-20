@@ -19,6 +19,13 @@ import com.azure.booknest.common.response.ErrorResponse;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+        @ExceptionHandler(BadRequestException.class)
+        public ResponseEntity<ErrorResponse> handleBadRequestException(
+                        BadRequestException exception,
+                        WebRequest request) {
+                return buildResponse(HttpStatus.BAD_REQUEST, exception.getMessage(), request, Map.of());
+        }
+
         @ExceptionHandler(ConflictException.class)
         public ResponseEntity<ErrorResponse> handleConflictException(
                         ConflictException exception,
